@@ -83,7 +83,7 @@ function ido.bind(binds)
 	if ido.active then
 		if vim.keymap then
 			for key, func in pairs(binds) do
-				vim.keymap.set("i", key, func, { buffer = ido.buffer.query })
+				vim.keymap.set("i", key, func, { buffer = ido.buffer.query, expr = true })
 			end
 		else
 			for key, func in pairs(binds) do
@@ -93,7 +93,7 @@ function ido.bind(binds)
 					"i",
 					key,
 					"<c-o>:lua require('ido').bindings[" .. #ido.bindings .. "]()<cr>",
-					{ silent = true, noremap = true }
+					{ silent = true, noremap = true, expr = true }
 				)
 			end
 		end
@@ -293,6 +293,7 @@ ido.register("browse", function()
 			end
 		end,
 
+    -- Override the backspace key to go up a directory if the query is empty
 		["<bs>"] = function()
       local query = ido.get_query()
       if query == "" then
@@ -301,6 +302,9 @@ ido.register("browse", function()
           cwd = "/"
         end
         sync()
+      else
+        -- Otherwise, the normal neovim backspace behavior is used
+        return "<bs>"
       end
 		end,
 	})
