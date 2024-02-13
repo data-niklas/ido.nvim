@@ -83,18 +83,14 @@ function ido.bind(binds)
 	if ido.active then
 		if vim.keymap then
 			for key, func in pairs(binds) do
-				vim.keymap.set("i", key, func, { buffer = ido.buffer.query, expr = true })
-			end
-		else
-			for key, func in pairs(binds) do
-				table.insert(ido.bindings, func)
-				vim.api.nvim_buf_set_keymap(
-					ido.buffer.query,
-					"i",
-					key,
-					"<c-o>:lua require('ido').bindings[" .. #ido.bindings .. "]()<cr>",
-					{ silent = true, noremap = true, expr = true }
-				)
+				vim.keymap.set("i", key, function()
+          local ret = func()
+          if ret == nil then
+            return ""
+          else
+            return ret
+          end
+        end, { buffer = ido.buffer.query, expr = true })
 			end
 		end
 	else
@@ -302,6 +298,7 @@ ido.register("browse", function()
           cwd = "/"
         end
         sync()
+        return ""
       else
         -- Otherwise, the normal neovim backspace behavior is used
         return "<bs>"
