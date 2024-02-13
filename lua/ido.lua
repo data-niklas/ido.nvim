@@ -293,7 +293,7 @@ ido.register("browse", function()
 				sync()
 			else
 				-- Otherwise, assume the cursor is at the end of the line and delete the character
-				vim.api.nvim_buf_set_lines(ido.buffer.query, -2, -1, false, {})
+				vim.api.nvim_buf_set_text(ido.buffer.query, 0, -2, 0, -1, false, {})
 			end
 		end,
 	})
