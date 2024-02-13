@@ -268,7 +268,7 @@ ido.register("browse", function ()
   end, "Browse: "..cwd)
 
   ido.bind {
-    ["<a-l>"] = function ()
+    ["<tab>"] = function ()
       local item = ido.get_item()
       if item:sub(-1) == "/" then
         cwd = join(cwd, item:sub(1, -2))
@@ -276,7 +276,7 @@ ido.register("browse", function ()
       end
     end,
 
-    ["<a-h>"] = function ()
+    ["<bs>"] = function ()
       cwd = cwd:sub(1, cwd:find("/[^/]*$") - 1)
       if cwd == "" then
         cwd = "/"
