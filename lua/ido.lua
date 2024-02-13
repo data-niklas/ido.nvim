@@ -294,11 +294,14 @@ ido.register("browse", function()
 		end,
 
 		["<bs>"] = function()
-			cwd = cwd:sub(1, cwd:find("/[^/]*$") - 1)
-			if cwd == "" then
-				cwd = "/"
-			end
-			sync()
+      local query = ido.get_query()
+      if query == "" then
+        cwd = cwd:sub(1, cwd:find("/[^/]*$") - 1)
+        if cwd == "" then
+          cwd = "/"
+        end
+        sync()
+      end
 		end,
 	})
 end)
