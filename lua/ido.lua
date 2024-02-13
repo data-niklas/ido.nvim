@@ -83,14 +83,7 @@ function ido.bind(binds)
 	if ido.active then
 		if vim.keymap then
 			for key, func in pairs(binds) do
-				vim.keymap.set("i", key, function()
-          local ret = func()
-          if ret == nil then
-            return ""
-          else
-            return ret
-          end
-        end, { buffer = ido.buffer.query, expr = true })
+				vim.keymap.set("i", key, func, { buffer = ido.buffer.query })
 			end
 		end
 	else
@@ -289,20 +282,19 @@ ido.register("browse", function()
 			end
 		end,
 
-    -- Override the backspace key to go up a directory if the query is empty
+		-- Override the backspace key to go up a directory if the query is empty
 		["<bs>"] = function()
-      local query = ido.get_query()
-      if query == "" then
-        cwd = cwd:sub(1, cwd:find("/[^/]*$") - 1)
-        if cwd == "" then
-          cwd = "/"
-        end
-        sync()
-        return ""
-      else
-        -- Otherwise, the normal neovim backspace behavior is used
-        return "<bs>"
-      end
+			local query = ido.get_query()
+			if query == "" then
+				cwd = cwd:sub(1, cwd:find("/[^/]*$") - 1)
+				if cwd == "" then
+					cwd = "/"
+				end
+				sync()
+			else
+				-- Otherwise, assume the cursor is at the end of the line and delete the character
+				vim.api.nvim_buf_set_lines(ido.buffer.query, -2, -1, false, {})
+			end
 		end,
 	})
 end)
